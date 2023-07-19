@@ -1,0 +1,59 @@
+UTILISATEURS
+    id_user 	: 	INTEGER PRIMARY KEY
+    login_user 	: 	TEXT NOT NULL
+    pwd_user 	:	TEXT NOT NULL
+    
+    
+    
+COMPTES
+    id_compte 	:	INTEGER PK
+    libelle_compte :	TEXT NOT NULL
+    id_user_fkcompte:   INTEGER NOT NULL
+    FOREIGN KEY(id_user_fkcompte) REFERENCES UTILISATEURS(id_user)
+ 
+ 
+ 
+TYPES
+    id_type 	:	INTEGER PK
+    libelle_type:	TEXT NOT NULL
+    id_user_fktype:	INTEGER NOT NULL
+    FOREIGN KEY(id_user_fktype) REFERENCES UTILISATEURS(id_user)
+  
+   
+
+TRANSACTIONS  -> On part du principe de la transaction ponctuelle
+		 et on crééra une entité rappel pour que l'user
+		 saisisse une transaction récurrente
+		 (je peux aussi/en plus ajouter une classe d'association
+		 sur une relation récursive) -> transaction-enfant_transaction-parent avec date de début et intervalle de temps
+    id_transac	:	INTEGER PK
+    id_compte_fktransac:INTEGER NOT NULL
+    id_type_fktransac:	INTEGER NOT NULL
+    montant_transac:	REAL NOT NULL
+    date_transac :	DATE NOT NULL
+    libelle_transac :	TEXT NOT NULL
+    description_transac:TEXT
+    FOREIGN KEY(id_compte_fktransac) REFERENCES COMPTES(id_compte)
+    FOREIGN KEY(id_type_fktransac) REFERENCES TYPES(id_type)
+    
+    
+    
+PROJETS
+    id_projet	:	INTEGER PK
+    libelle_projet:	TEXT NOT NULL
+    date_projet	:	DATE NOT NULL
+    id_user_fkprojet:	INTEGER NOT NULL
+    
+    
+    
+COUTS
+    id_cout	:	INTEGER PK
+    id_projet_fkcout:	INTEGER NOT NULL
+    id_type_fkcout:	INTEGER NOT NULL
+    libelle_cout:	TEXT NOT NULL
+    description_cout:	TEXT
+    FOREIGN KEY(id_projet_fkcout) REFERENCES PROJETS(id_projet)
+    FOREIGN KEY(id_type_fkcout) REFERENCES TYPES(id_type)       
+    
+    
+
