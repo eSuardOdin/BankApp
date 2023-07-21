@@ -17,9 +17,7 @@ namespace Entities {
         {
             var dbMan = new DbManager();
             Console.WriteLine($"INSERT INTO Utilisateurs (login_user, pwd_user) VALUES ({this.LoginUser}, {this.PwdUser});");
-            dbMan.ExecuteNonQuery($"INSERT INTO Utilisateurs (login_user, pwd_user) VALUES (\"{this.LoginUser}\", \"{this.PwdUser}\");");
-
-            
+            dbMan.ExecuteNonQuery($"INSERT INTO Utilisateurs (login_user, pwd_user) VALUES (\"{this.LoginUser}\", \"{this.PwdUser}\");");   
         }
     }    
 }

@@ -44,8 +44,11 @@ namespace Db
         using var connection = OpenConnection();
         {
             var cmd = new SqliteCommand(query, connection);
-            
-            cmd.ExecuteNonQuery();
+            try {
+                cmd.ExecuteNonQuery();
+            } catch(Exception e) {
+                Console.WriteLine(e.Message);
+            }
         }
         connection.Close();
     }
@@ -57,7 +60,7 @@ namespace Db
         ExecuteNonQuery(@"
                 CREATE TABLE IF NOT EXISTS Utilisateurs (
                     id_user INTEGER PRIMARY KEY, 
-                    login_user TEXT NOT NULL, 
+                    login_user TEXT NOT NULL UNIQUE, 
                     pwd_user TEXT NOT NULL
                 );");
 
