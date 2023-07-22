@@ -63,7 +63,8 @@ namespace Db
         {
             var cmd = new SqliteCommand(query, connection);
             try {
-                foreach(var parameter in parameters) {
+                foreach(var parameter in parameters) 
+                {
                     cmd.Parameters.AddWithValue(parameter.Key, parameter.Value);
                 }
                 cmd.ExecuteNonQuery();
@@ -73,6 +74,27 @@ namespace Db
             }
         }
         connection.Close();
+    }
+
+
+    public SqliteDataReader ExecuteSelectQuery(string query, Dictionary<string, object> parameters) 
+    {
+        using var connection = OpenConnection();
+        connection.Open();
+        using var cmd = new SqliteCommand(query, connection);
+        try 
+        {
+            foreach(var parameter in parameters)
+            {
+                cmd.Parameters.AddWithValue(parameter.Key, parameter.Value);
+            }
+            return cmd.ExecuteReader();
+        } 
+        catch (Exception e) 
+        {
+            Console.WriteLine(e.Message);
+        }
+        return null;
     }
     /// <summary>
     /// Creates the bankapp database
