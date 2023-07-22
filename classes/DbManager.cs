@@ -8,7 +8,6 @@ namespace Db
         /// <summary>
         /// Constructor of DbManager
         /// </summary>
-
         public DbManager() 
         {
             DbPath = "bank_app.db.sqlite";
@@ -38,7 +37,11 @@ namespace Db
         connection.Close();
     }
 
-    ///
+    /// <summary>
+    /// Execute a sql query and print an
+    /// error if Exception
+    /// </summary>
+    /// <param name="query">The query to print</param>
     public void ExecuteNonQuery(string query)
     {
         using var connection = OpenConnection();
@@ -46,6 +49,25 @@ namespace Db
             var cmd = new SqliteCommand(query, connection);
             try {
                 cmd.ExecuteNonQuery();
+            } catch(Exception e) {
+                Console.WriteLine(e.Message);
+            }
+        }
+        connection.Close();
+    }
+
+
+    public void ExecuteInsertQuery(string query, Dictionary<string, object> parameters)
+    {
+        using var connection = OpenConnection();
+        {
+            var cmd = new SqliteCommand(query, connection);
+            try {
+                foreach(var parameter in parameters) {
+                    cmd.Parameters.AddWithValue(parameter.Key, parameter.Value);
+                }
+                cmd.ExecuteNonQuery();
+
             } catch(Exception e) {
                 Console.WriteLine(e.Message);
             }
