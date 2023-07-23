@@ -7,8 +7,7 @@ namespace Entities {
         private string LoginUser {get; set;}
         private string PwdUser {get; set;}
         private Db.DbManager DbManager {get; set;}
-        private List<Account> Accounts {get; set;} // Not used for now, will see if useful.
-
+        private List<Account> Accounts {get; set;} 
 
         /// <summary>
         /// Construct a whole User when all attributes are defined
@@ -23,6 +22,7 @@ namespace Entities {
             PwdUser = passwordUser;
             Accounts = new List<Account>();
             DbManager = new Db.DbManager();
+            GetAllAccounts();
         }
 
         /// <summary>
@@ -108,6 +108,47 @@ namespace Entities {
                             this.IdUser = reader.GetInt32(0);
                             this.LoginUser = reader.GetString(1);
                             this.PwdUser = reader.GetString(2);
+                            // Get the accounts for the user
+                            GetAllAccounts();
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                }
+            }
+        }
+    
+        /// <summary>
+        /// Gets all accounts of an user.
+        /// Used to init List<Account>
+        /// </summary>
+        private void GetAllAccounts() 
+        {   
+            Console.WriteLine($"Getting all accounts of user id : {IdUser}");
+             // Open connection to the database
+            using (var connection = DbManager.OpenConnection())
+            {
+                // Setting the parameters to insert in query
+                var parameters = new Dictionary<string, object>();
+                string query = "SELECT * FROM Accounts WHERE id_user_fkaccount = @id_user";
+                parameters["@id_user"] = this.IdUser;
+                var command = new SqliteCommand(query, connection);
+
+                try
+                {
+                    foreach(var parameter in parameters)
+                    {
+                        command.Parameters.AddWithValue(parameter.Key, parameter.Value);
+                    }
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while(reader.Read())
+                        {
+                            var account = new Account(reader.GetInt32(0), reader.GetString(1), reader.GetInt32(2));
+                            bool isPresent = Accounts.Any(acc => acc.IdAccount == account.IdAccount );
+                            if (!isPresent) { this.Accounts.Add(account); }  
                         }
                     }
                 }
@@ -118,14 +159,24 @@ namespace Entities {
             }
         }
 
-
         /// <summary>
         /// Create an account for the user
+        /// 
+        /// I'm hard limiting to 3 accounts
         /// </summary>
+        /// <param name="libelle">Name of the account</param>
         public void CreateAccount (string libelle)
         {
+            Console.WriteLine($"Nb of accounts : {this.Accounts.Count}");
+            if(this.Accounts.Count >= 3) { return ;}
             var account = new Account(libelleAccount: libelle, idUserFkAccount: this.IdUser);
             account.AddAccountToDb();
+            bool isPresent = Accounts.Any(acc => acc.IdAccount == account.IdAccount );
+            if (!isPresent) { this.Accounts.Add(account); }
+            for(int i = 0; i < Accounts.Count; i++)
+            {
+                Console.WriteLine(Accounts[i].LibelleAccount);
+            }
         }
 
         public void CreateTransaction (int idAccount, decimal amount)

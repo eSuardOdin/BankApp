@@ -4,8 +4,8 @@ namespace Entities
 {
     public class Account
     {
-        private int IdAccount { get; set; }
-        private string LibelleAccount { get; set; }
+        public int IdAccount { get; private set; }
+        public string LibelleAccount { get; set; }
         private int IdUserFkAccount { get; set; }
         private Db.DbManager DbManager {get; set;}
 
@@ -29,6 +29,9 @@ namespace Entities
         /// </summary>
         public void AddAccountToDb ()
         {
+            // Throw exception if empty string
+            if(this.LibelleAccount == "") { this.LibelleAccount = null; }
+
             // Setting the parameters to insert in query
             var parameters = new Dictionary<string, object> {
                 { "@libelle_account", this.LibelleAccount },
