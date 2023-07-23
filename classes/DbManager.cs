@@ -13,8 +13,6 @@ namespace Db
             DbPath = "bank_app.db.sqlite";
         }
 
-
-
         /// <summary>
         /// Opens connection to the database
         /// </summary>
@@ -45,46 +43,6 @@ namespace Db
         }
 
 
-        // public void ExecuteInsertQuery(string query, Dictionary<string, object> parameters)
-        // {
-        //     using var connection = OpenConnection();
-        //     {
-        //         var cmd = new SqliteCommand(query, connection);
-        //         try {
-        //             foreach(var parameter in parameters) 
-        //             {
-        //                 cmd.Parameters.AddWithValue(parameter.Key, parameter.Value);
-        //             }
-        //             cmd.ExecuteNonQuery();
-
-        //         } catch(Exception e) {
-        //             Console.WriteLine(e.Message);
-        //         }
-        //     }
-        //     connection.Close();
-        // }
-
-        // Returns a SqliteDataReader, remember that caller
-        // is responsible for closing connection to db 
-        public SqliteDataReader ExecuteSelectQuery(string query, Dictionary<string, object> parameters) 
-        {
-            
-            var connection = OpenConnection();
-            using var cmd = new SqliteCommand(query, connection);
-            try 
-            {
-                foreach(var parameter in parameters)
-                {
-                    cmd.Parameters.AddWithValue(parameter.Key, parameter.Value);
-                }
-                return cmd.ExecuteReader();
-            } 
-            catch (Exception e) 
-            {
-                Console.WriteLine(e.Message);
-            }
-            return null;
-        }
         /// <summary>
         /// Creates the bankapp database
         /// </summary>
@@ -109,11 +67,10 @@ namespace Db
                     );");
             
                 ExecuteNonQuery(@"
-                    CREATE TABLE IF NOT EXISTS Types (
+                    CREATE TABLE IF NOT EXISTS AppTypes (
                         id_type INTEGER PRIMARY KEY, 
                         libelle_type TEXT NOT NULL, 
-                        id_user_fktype INTEGER, 
-                        FOREIGN KEY(id_user_fktype) REFERENCES AppUsers(id_user)
+                        id_user_fktype INTEGER
                     );");
 
                 ExecuteNonQuery(@"
@@ -132,7 +89,7 @@ namespace Db
                         id_type_fktypetransac INTEGER NOT NULL,
                         id_transac_fktypetransac INTEGER NOT NULL,
                         PRIMARY KEY(id_type_fktypetransac, id_transac_fktypetransac),
-                        FOREIGN KEY(id_type_fktypetransac) REFERENCES Types(id_type),
+                        FOREIGN KEY(id_type_fktypetransac) REFERENCES AppTypes(id_type),
                         FOREIGN KEY(id_transac_fktypetransac) REFERENCES Transactions(id_transac)
                     );
                 ");

@@ -8,6 +8,7 @@ namespace Entities {
         private string PwdUser {get; set;}
         private Db.DbManager DbManager {get; set;}
         private List<Account> Accounts {get; set;} 
+        private List<AppType> AppTypes {get; set;} 
 
         /// <summary>
         /// Construct a whole User when all attributes are defined
@@ -21,6 +22,7 @@ namespace Entities {
             LoginUser = loginUser;
             PwdUser = passwordUser;
             Accounts = new List<Account>();
+            AppTypes = new List<AppType>();
             DbManager = new Db.DbManager();
             GetAllAccounts();
         }
@@ -100,16 +102,13 @@ namespace Entities {
                     {
                         while(reader.Read())
                         {
-                            Console.WriteLine(@$"
-                            User Id : {reader.GetInt32(0)}
-                            User Login : {reader.GetString(1)}
-                            User Password : {reader.GetString(2)}
-                            ");
                             this.IdUser = reader.GetInt32(0);
                             this.LoginUser = reader.GetString(1);
                             this.PwdUser = reader.GetString(2);
                             // Get the accounts for the user
                             GetAllAccounts();
+                            // Get all types for the user
+                            GetAllTypes();
                         }
                     }
                 }
@@ -135,19 +134,20 @@ namespace Entities {
                 string query = "SELECT * FROM Accounts WHERE id_user_fkaccount = @id_user";
                 parameters["@id_user"] = this.IdUser;
                 var command = new SqliteCommand(query, connection);
-
                 try
                 {
+                    // Replace parameters to prevent injection
                     foreach(var parameter in parameters)
                     {
                         command.Parameters.AddWithValue(parameter.Key, parameter.Value);
                     }
                     using (var reader = command.ExecuteReader())
                     {
+                        // Push every Accounts in the list without duplication
                         while(reader.Read())
                         {
                             var account = new Account(reader.GetInt32(0), reader.GetString(1), reader.GetInt32(2));
-                            bool isPresent = Accounts.Any(acc => acc.IdAccount == account.IdAccount );
+                            bool isPresent = Accounts.Any(acc => acc.LibelleAccount == account.LibelleAccount );
                             if (!isPresent) { this.Accounts.Add(account); }  
                         }
                     }
@@ -162,20 +162,91 @@ namespace Entities {
         /// <summary>
         /// Create an account for the user
         /// 
-        /// I'm hard limiting to 3 accounts
+        /// I'm commenting possibility to stop entering accounts after a delimited amount -> 
+        /// // if(this.Accounts.Count >= 10) { return ;}
         /// </summary>
         /// <param name="libelle">Name of the account</param>
         public void CreateAccount (string libelle)
         {
-            Console.WriteLine($"Nb of accounts : {this.Accounts.Count}");
-            if(this.Accounts.Count >= 3) { return ;}
+            // Creating the account
             var account = new Account(libelleAccount: libelle, idUserFkAccount: this.IdUser);
-            account.AddAccountToDb();
-            bool isPresent = Accounts.Any(acc => acc.IdAccount == account.IdAccount );
-            if (!isPresent) { this.Accounts.Add(account); }
-            for(int i = 0; i < Accounts.Count; i++)
+            
+            // Checking if it's already present in List<Account>
+            bool isPresent = Accounts.Any(acc => acc.LibelleAccount == account.LibelleAccount );
+            
+            // If not present we create it
+            if (!isPresent) 
+            { 
+                this.Accounts.Add(account); 
+                account.AddAccountToDb();      
+            }
+            else 
+            { 
+                Console.WriteLine("Cannot add two accounts with same name on same user"); 
+            }
+        }
+
+
+
+
+
+        /// <summary>
+        /// Gets all accounts of an user.
+        /// Used to init List<Account>
+        /// </summary>
+        private void GetAllTypes() 
+        {   
+            Console.WriteLine($"Getting all types of user id : {IdUser}");
+             // Open connection to the database
+            using (var connection = DbManager.OpenConnection())
             {
-                Console.WriteLine(Accounts[i].LibelleAccount);
+                // Setting the parameters to insert in query
+                var parameters = new Dictionary<string, object>();
+                string query = "SELECT * FROM AppTypes WHERE id_user_fktype = @id_user";
+                parameters["@id_user"] = this.IdUser;
+                var command = new SqliteCommand(query, connection);
+                try
+                {
+                    // Replace parameters to prevent injection
+                    foreach(var parameter in parameters)
+                    {
+                        command.Parameters.AddWithValue(parameter.Key, parameter.Value);
+                    }
+                    using (var reader = command.ExecuteReader())
+                    {
+                        // Push every Types in the list without duplication
+                        while(reader.Read())
+                        {
+                            var newType = new AppType(reader.GetInt32(0), reader.GetString(1), reader.GetInt32(2));
+                            bool isPresent = AppTypes.Any(listType => listType.LibelleType == newType.LibelleType );
+                            if (!isPresent) { this.AppTypes.Add(newType); }  
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                }
+            }
+        }
+
+        public void CreateType (string libelle)
+        {
+            // Creating the account
+            var newType = new AppType(libelleType: libelle, idUserFkType: this.IdUser);
+            
+            // Checking if it's already present in List<Types>
+            bool isPresent = AppTypes.Any(listType => listType.LibelleType == newType.LibelleType );
+            
+            // If not present we create it
+            if (!isPresent) 
+            { 
+                this.AppTypes.Add(newType); 
+                newType.AddAppTypeToDb();      
+            }
+            else 
+            { 
+                Console.WriteLine("Cannot add two accounts with same name on same user"); 
             }
         }
 

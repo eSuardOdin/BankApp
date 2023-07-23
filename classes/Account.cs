@@ -4,8 +4,8 @@ namespace Entities
 {
     public class Account
     {
-        public int IdAccount { get; private set; }
-        public string LibelleAccount { get; set; }
+        private int IdAccount { get; set; }
+        public string LibelleAccount { get; private set; }
         private int IdUserFkAccount { get; set; }
         private Db.DbManager DbManager {get; set;}
 
