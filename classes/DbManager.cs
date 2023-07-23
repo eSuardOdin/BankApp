@@ -13,6 +13,8 @@ namespace Db
             DbPath = "bank_app.db.sqlite";
         }
 
+
+
         /// <summary>
         /// Opens connection to the database
         /// </summary>
@@ -23,7 +25,66 @@ namespace Db
             return connection;
         }
 
+        /// <summary>
+        /// Execute a sql query and print an
+        /// error if Exception
+        /// </summary>
+        /// <param name="query">The query to print</param>
+        private void ExecuteNonQuery(string query)
+        {
+            using var connection = OpenConnection();
+            {
+                var cmd = new SqliteCommand(query, connection);
+                try {
+                    cmd.ExecuteNonQuery();
+                } catch(Exception e) {
+                    Console.WriteLine(e.Message);
+                }
+            }
+            connection.Close();
+        }
 
+
+        // public void ExecuteInsertQuery(string query, Dictionary<string, object> parameters)
+        // {
+        //     using var connection = OpenConnection();
+        //     {
+        //         var cmd = new SqliteCommand(query, connection);
+        //         try {
+        //             foreach(var parameter in parameters) 
+        //             {
+        //                 cmd.Parameters.AddWithValue(parameter.Key, parameter.Value);
+        //             }
+        //             cmd.ExecuteNonQuery();
+
+        //         } catch(Exception e) {
+        //             Console.WriteLine(e.Message);
+        //         }
+        //     }
+        //     connection.Close();
+        // }
+
+        // Returns a SqliteDataReader, remember that caller
+        // is responsible for closing connection to db 
+        public SqliteDataReader ExecuteSelectQuery(string query, Dictionary<string, object> parameters) 
+        {
+            
+            var connection = OpenConnection();
+            using var cmd = new SqliteCommand(query, connection);
+            try 
+            {
+                foreach(var parameter in parameters)
+                {
+                    cmd.Parameters.AddWithValue(parameter.Key, parameter.Value);
+                }
+                return cmd.ExecuteReader();
+            } 
+            catch (Exception e) 
+            {
+                Console.WriteLine(e.Message);
+            }
+            return null;
+        }
         /// <summary>
         /// Creates the bankapp database
         /// </summary>
@@ -59,7 +120,7 @@ namespace Db
                     CREATE TABLE IF NOT EXISTS Transactions (
                         id_transac INTEGER PRIMARY KEY, 
                         id_account_fktransac INTEGER NOT NULL, 
-                        montant_transac REAL NOT NULL, 
+                        amount_transac REAL NOT NULL, 
                         date_transac DATE NOT NULL, 
                         libelle_transac TEXT NOT NULL, 
                         description_transac TEXT, 

@@ -7,7 +7,7 @@ namespace Entities {
         private string LoginUser {get; set;}
         private string PwdUser {get; set;}
         private Db.DbManager DbManager {get; set;}
-        private List<Account> Accounts {get; set;}
+        private List<Account> Accounts {get; set;} // Not used for now, will see if useful.
 
 
         /// <summary>
@@ -116,6 +116,21 @@ namespace Entities {
                     Console.WriteLine(e.Message);
                 }
             }
-        } 
+        }
+
+
+        /// <summary>
+        /// Create an account for the user
+        /// </summary>
+        public void CreateAccount (string libelle)
+        {
+            var account = new Account(libelleAccount: libelle, idUserFkAccount: this.IdUser);
+            account.AddAccountToDb();
+        }
+
+        public void CreateTransaction (int idAccount, decimal amount)
+        {
+
+        }
     }    
 }
