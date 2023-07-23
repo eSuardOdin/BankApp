@@ -1,6 +1,6 @@
 ﻿using Entities;
-var dbManager = new Db.DbManager();
-
+Db.DbManager dbMan = new Db.DbManager();
+dbMan.ConstructDb();
 // Console.Write("username : ");
 // string log = Console.ReadLine();
 // Console.Write("password : ");
@@ -9,9 +9,14 @@ var dbManager = new Db.DbManager();
 // Console.Write("id : ");
 // int id = Console.ReadLine();
 
-// Utilisateur ut = new Utilisateur(0, log, pwd);
+AppUser ut1 = new AppUser(0, "wannot", "p@ssw0rd");
+AppUser ut2 = new AppUser(0, "floflo", "m0t2p4ss3");
+ut1.AddUserToDb();
+ut2.AddUserToDb();
 
-// ut.AddUtilisateurToDb();
-Utilisateur.FindUser("Erwann");
+AppUser ut3 = new AppUser();
+ut3.SelectUser(id:1);
+// AppUser ut4 = AppUser.SelectUser(login:"wannot");
+
 
 Console.WriteLine("Pas de crash !");
