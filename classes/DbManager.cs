@@ -46,7 +46,7 @@ namespace Db
         /// <summary>
         /// Creates the bankapp database
         /// </summary>
-        public void ConstructDb()
+        public bool ConstructDb()
         {
             bool isDbNew = !System.IO.File.Exists(DbPath);
             if(isDbNew) 
@@ -93,34 +93,35 @@ namespace Db
                         FOREIGN KEY(id_transac_fktypetransac) REFERENCES Transactions(id_transac)
                     );
                 ");
+                
+                 /* ExecuteNonQuery(@"
+                     CREATE TABLE IF NOT EXISTS Projects (
+                        id_project INTEGER PRIMARY KEY,
+                        id_user_fkproject INTEGER NOT NULL,
+                        libelle_project TEXT NOT NULL,
+                         date_project DATE,
+                         FOREIGN KEY(id_user_fkproject) REFERENCES AppUsers(id_user) 
+                     );");
 
-                // ExecuteNonQuery(@"
-                //     CREATE TABLE IF NOT EXISTS Projects (
-                //         id_project INTEGER PRIMARY KEY,
-                //         id_user_fkproject INTEGER NOT NULL,
-                //         libelle_project TEXT NOT NULL,
-                //         date_project DATE,
-                //         FOREIGN KEY(id_user_fkproject) REFERENCES AppUsers(id_user) 
-                //     );");
+                ExecuteNonQuery(@"
+                     CREATE TABLE IF NOT EXISTS Costs (
+                         id_cost INTEGER PRIMARY KEY,
+                         id_project_fkcost INTEGER NOT NULL,
+                         libelle_cost TEXT NOT NULL,
+                         description_cost TEXT,
+                         FOREIGN KEY(id_project_fkcost) REFERENCES Projects(id_project)
+                     );");
 
-                // ExecuteNonQuery(@"
-                //     CREATE TABLE IF NOT EXISTS Costs (
-                //         id_cost INTEGER PRIMARY KEY,
-                //         id_project_fkcost INTEGER NOT NULL,
-                //         libelle_cost TEXT NOT NULL,
-                //         description_cost TEXT,
-                //         FOREIGN KEY(id_project_fkcost) REFERENCES Projects(id_project)
-                //     );");
-
-                // ExecuteNonQuery(@"
-                //     CREATE TABLE IF NOT EXISTS Types_Costs (
-                //         id_type_fktypecost INTEGER NOT NULL,
-                //         id_cost_fktypecost INTEGER NOT NULL,
-                //         PRIMARY KEY(id_type_fktypecost, id_cost_fktypecost),
-                //         FOREIGN KEY(id_type_fktypecost) REFERENCES Types(id_type),
-                //         FOREIGN KEY(id_cost_fktypecost) REFERENCES Costs(id_cost) 
-                //     );");
+                ExecuteNonQuery(@"
+                    CREATE TABLE IF NOT EXISTS Types_Costs (
+                        id_type_fktypecost INTEGER NOT NULL,
+                        id_cost_fktypecost INTEGER NOT NULL,
+                        PRIMARY KEY(id_type_fktypecost, id_cost_fktypecost),
+                        FOREIGN KEY(id_type_fktypecost) REFERENCES Types(id_type),
+                        FOREIGN KEY(id_cost_fktypecost) REFERENCES Costs(id_cost) 
+                    );"); */
             }
+            return isDbNew;
         }
 
     }

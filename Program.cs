@@ -1,6 +1,15 @@
 ﻿using Entities;
 Db.DbManager dbMan = new Db.DbManager();
-dbMan.ConstructDb();
+if (dbMan.ConstructDb())
+{
+    var type1 = new AppType(libelleType: "Loisir");
+    var type3 = new AppType(libelleType: "Enfants");
+    var type2 = new AppType(libelleType: "Travail");
+
+    type1.AddAppTypeToDb();
+    type2.AddAppTypeToDb();
+    type3.AddAppTypeToDb();
+}
 
 AppUser ut1 = new AppUser(0, "wannot", "p@ssw0rd");
 AppUser ut2 = new AppUser(0, "floflo", "m0t2p4ss3");
@@ -15,15 +24,8 @@ ut3.SelectUser(id:1);
 // ut3.CreateAccount(libelle);
 
 
-var type1 = new AppType(libelleType: "Loisir");
-var type3 = new AppType(libelleType: "Enfants");
-var type2 = new AppType(libelleType: "Travail");
 
-type1.AddAppTypeToDb();
-type2.AddAppTypeToDb();
-type3.AddAppTypeToDb();
-
-
+Console.Write("Créez un type de transaction : ");
 string libelle = Console.ReadLine();
 ut3.CreateType(libelle);
 Console.WriteLine("Pas de crash !");
