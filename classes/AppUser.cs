@@ -257,7 +257,7 @@ namespace Entities {
         /// <param name="libelle"></param>
         /// <param name="typesId">All the types chosen by user</param>
         /// <param name="description"></param>
-        public void CreateTransaction (int idAccount, decimal amount, DateTime date, string libelle, int[] typesId, string description = null)
+        public void CreateTransaction (int idAccount, decimal amount, DateTime date, string libelle, List<int> typesId, string description = null)
         {
             Transaction transac = new Transaction (idAccount,amount, date, libelle, description);
             transac.AddTransacToDb(typesId);

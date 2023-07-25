@@ -51,6 +51,7 @@ namespace Entities
                     }
                     command.ExecuteNonQuery();
                     Console.WriteLine($"Account {this.LibelleAccount} inserted in DB");
+
                 }
                 catch (Exception e)
                 {

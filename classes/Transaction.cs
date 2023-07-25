@@ -29,7 +29,7 @@ namespace Entities {
         /// Adds a transact
         /// </summary>
         /// <param name="idType"></param>
-        public void AddTransacToDb(int[] typesId)
+        public void AddTransacToDb(List<int> typesId)
         {
             var parameters = new Dictionary<string, object>() {
                 { "@id_account_fktransac", IdAccountFkTransac},
@@ -53,6 +53,35 @@ namespace Entities {
                     }
                     command.ExecuteNonQuery();
                     Console.WriteLine($"Transaction '{this.LibelleTransac}' inserted in DB");
+
+                    // Retrieve the last inserted ID
+                    query = "SELECT last_insert_rowid();";
+                    command.CommandText = query;
+                    IdTransac = Convert.ToInt32(command.ExecuteScalar());
+
+                    // Now let's link types to transaction
+                    foreach(int id in typesId) 
+                    {
+                        var secondParameters = new Dictionary<string, object> {
+                            {"@id_type_fktypetransac", id},
+                            {"@id_transac_fktypetransac", IdTransac}
+                        };
+                        var secondQuery = @"INSERT INTO Types_Transactions (id_type_fktypetransac, id_transac_fktypetransac) VALUES (@id_type_fktypetransac, @id_transac_fktypetransac)";
+                        var secondCommand = new SqliteCommand(secondQuery, connection);
+
+                        try
+                        {
+                            foreach(var secondParameter in secondParameters)
+                            {
+                                secondCommand.Parameters.AddWithValue(secondParameter.Key, secondParameter.Value);
+                            }
+                            secondCommand.ExecuteNonQuery();
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine(e.Message);
+                        }
+                    }
                 }
                 catch (Exception e)
                 {
