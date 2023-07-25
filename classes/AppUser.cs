@@ -6,7 +6,7 @@ namespace Entities {
         private int IdUser {get; set;}
         private string LoginUser {get; set;}
         private string PwdUser {get; set;}
-        private Db.DbManager DbManager {get; set;}
+        private DbManager DbManager {get; set;}
         private List<Account> Accounts {get; set;} 
         private List<AppType> AppTypes {get; set;} 
 
@@ -23,7 +23,7 @@ namespace Entities {
             PwdUser = passwordUser;
             Accounts = new List<Account>();
             AppTypes = new List<AppType>();
-            DbManager = new Db.DbManager();
+            DbManager = new DbManager();
             GetAllAccounts();
         }
 
@@ -250,9 +250,20 @@ namespace Entities {
             }
         }
 
-        public void CreateTransaction (int idAccount, decimal amount)
-        {
 
+        /// <summary>
+        /// Creates a transaction and push it to base
+        /// </summary>
+        /// <param name="idAccount"></param>
+        /// <param name="amount"></param>
+        /// <param name="date"></param>
+        /// <param name="libelle"></param>
+        /// <param name="type"></param>
+        /// <param name="description"></param>
+        public void CreateTransaction (int idAccount, decimal amount, DateTime date, string libelle, AppType type, string description = null)
+        {
+            Transaction transac = new Transaction (idAccount, this.IdUser, amount, date, libelle, description);
+            transac.AddTransacToDb();
         }
     }    
 }

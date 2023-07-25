@@ -3,7 +3,7 @@ namespace Entities {
     using Microsoft.Data.Sqlite;
     public class AppType 
     {
-        private int IdType { get; set; }
+        public int IdType { get; private set; }
         public string LibelleType { get; private set; }
         private int IdUserFkType { get; set; }
         private Db.DbManager DbManager { get; set; } 
