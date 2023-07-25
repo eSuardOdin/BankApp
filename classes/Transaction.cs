@@ -25,7 +25,11 @@ namespace Entities {
             DbManager = new DbManager();
         }
 
-        public void AddTransacToDb()
+        /// <summary>
+        /// Adds a transact
+        /// </summary>
+        /// <param name="idType"></param>
+        public void AddTransacToDb(int[] typesId)
         {
             var parameters = new Dictionary<string, object>() {
                 { "@id_account_fktransac", IdAccountFkTransac},

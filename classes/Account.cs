@@ -7,7 +7,7 @@ namespace Entities
         private int IdAccount { get; set; }
         public string LibelleAccount { get; private set; }
         private int IdUserFkAccount { get; set; }
-        private Db.DbManager DbManager {get; set;}
+        private DbManager DbManager {get; set;}
 
         /// <summary>
         /// Constructor for Account
