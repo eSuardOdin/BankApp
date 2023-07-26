@@ -77,8 +77,10 @@ if(res == "Y")
         int idAccount = Convert.ToInt32(Console.ReadLine());
         
         Console.Write("Choose an amount : ");
-        /* decimal amount = (decimal.Parse(Console.ReadLine(), System.Globalization.NumberStyles.AllowLeadingSign));  */
-        decimal amount = Convert.ToDecimal(Console.ReadLine()); 
+        decimal amount = decimal.Parse(Console.ReadLine(), 
+                            System.Globalization.NumberStyles.AllowDecimalPoint |
+                            System.Globalization.NumberStyles.AllowLeadingWhite |
+                            System.Globalization.NumberStyles.AllowLeadingSign); 
         DateTime date = DateTime.Now;
         
         string res2 = "Y";
@@ -86,7 +88,7 @@ if(res == "Y")
         Console.Write("Enter at least a type of transaction's id : ");
         while (res2 == "Y")
         {
-            Console.Write("\nType name : ");
+            Console.Write("\nType id : ");
             int idType = Convert.ToInt32(Console.ReadLine());
             typesId.Add(idType);
             Console.Write("Another type ? (Y/N)");
@@ -95,7 +97,7 @@ if(res == "Y")
             
         
         userSelected.CreateTransaction(idAccount, amount, date, transName, typesId, description);
-        Console.Write("Another transaction? (Y/N)");
+        Console.Write("Another transaction? (Y/N) : ");
         res = Console.ReadLine().ToUpper();
     }
 }

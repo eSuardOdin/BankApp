@@ -1,3 +1,8 @@
 - L'écriture d'un type avec le même nom et même propriétaire ne rentre pas dans la base de données (comme prévu) mais un log dans la console laisse croire le contraire.
 
-- Problème type decimal négatif 
+- Chiffrage du password !
+
+
+- Update des attributs de transaction, compte, user (juste le mdp) et type. 
+
+-Suppression d'une transaction, d'un compte et d'un type

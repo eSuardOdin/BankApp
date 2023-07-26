@@ -20,6 +20,10 @@ namespace Db
         {
             var connection = new SqliteConnection($"Data Source = {DbPath}");
             connection.Open();
+            using (SqliteCommand pragmaCommand = new SqliteCommand("PRAGMA foreign_keys = ON;", connection))
+            {
+                pragmaCommand.ExecuteNonQuery();
+            }
             return connection;
         }
 
@@ -63,7 +67,7 @@ namespace Db
                         id_account INTEGER PRIMARY KEY, 
                         libelle_account TEXT NOT NULL,
                         id_user_fkaccount INTEGER NOT NULL,
-                        FOREIGN KEY(id_user_fkaccount) REFERENCES AppUsers(id_user)
+                        FOREIGN KEY(id_user_fkaccount) REFERENCES AppUsers(id_user) ON DELETE CASCADE
                     );");
             
                 ExecuteNonQuery(@"
@@ -81,7 +85,7 @@ namespace Db
                         date_transac DATE NOT NULL, 
                         libelle_transac TEXT NOT NULL, 
                         description_transac TEXT, 
-                        FOREIGN KEY(id_account_fktransac) REFERENCES Accounts(id_account)
+                        FOREIGN KEY(id_account_fktransac) REFERENCES Accounts(id_account) ON DELETE CASCADE
                     );");
                 
                 ExecuteNonQuery(@"
@@ -89,9 +93,18 @@ namespace Db
                         id_type_fktypetransac INTEGER NOT NULL,
                         id_transac_fktypetransac INTEGER NOT NULL,
                         PRIMARY KEY(id_type_fktypetransac, id_transac_fktypetransac),
-                        FOREIGN KEY(id_type_fktypetransac) REFERENCES AppTypes(id_type),
-                        FOREIGN KEY(id_transac_fktypetransac) REFERENCES Transactions(id_transac)
+                        FOREIGN KEY(id_type_fktypetransac) REFERENCES AppTypes(id_type) ON DELETE CASCADE,
+                        FOREIGN KEY(id_transac_fktypetransac) REFERENCES Transactions(id_transac) ON DELETE CASCADE
                     );
+                ");
+
+                ExecuteNonQuery(@"
+                    CREATE TRIGGER IF NOT EXISTS delete_types_on_user_delete
+                    BEFORE DELETE ON AppUsers
+                    FOR EACH ROW
+                    BEGIN
+                    DELETE FROM AppTypes WHERE id_user_fktype = OLD.id_user;
+                    END;
                 ");
                 
                  /* ExecuteNonQuery(@"
