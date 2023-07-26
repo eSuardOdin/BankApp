@@ -1,0 +1,3 @@
+- L'écriture d'un type avec le même nom et même propriétaire ne rentre pas dans la base de données (comme prévu) mais un log dans la console laisse croire le contraire.
+
+- Problème type decimal négatif 

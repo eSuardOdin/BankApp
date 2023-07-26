@@ -1,31 +1,32 @@
-﻿using System.Runtime.CompilerServices;
-using Entities;
-Db.DbManager dbMan = new Db.DbManager();
+﻿using Entities;
+using Db;
+// Getting the db manager to construct db if not exists
+DbManager dbMan = new DbManager();
 if (dbMan.ConstructDb())
 {
+    // Creates the default transaction types if new db
     var type1 = new AppType(libelleType: "Loisir");
     var type3 = new AppType(libelleType: "Enfants");
     var type2 = new AppType(libelleType: "Travail");
-
     type1.AddAppTypeToDb();
     type2.AddAppTypeToDb();
     type3.AddAppTypeToDb();
 
+    // Adding users for testing purpose, to delete.
     AppUser ut1 = new AppUser(0, "wannot", "p@ssw0rd");
     AppUser ut2 = new AppUser(0, "floflo", "m0t2p4ss3");
     ut1.AddUserToDb();
     ut2.AddUserToDb();
 }
 
-
-
+// Select one of the two users
+// no error preventing at all
 AppUser userSelected = new AppUser();
-
-Console.Write("Choisissez un utilisateur (1 ou 2 pour le test) : ");
-int idInput = Convert.ToInt32(Console.ReadLine()); // To delete obviously
+Console.Write("Choose an user id (1 or 2 for this test) : ");
+int idInput = Convert.ToInt32(Console.ReadLine()); 
 userSelected.SelectUser(id: idInput);
 
-
+//----------------------  Test ----------------------
 // Bank account(s) creation :
 Console.Write("Do you want to create a new bank account for the user ? (Y/N)");
 string res = Console.ReadLine().ToUpper();
@@ -76,8 +77,8 @@ if(res == "Y")
         int idAccount = Convert.ToInt32(Console.ReadLine());
         
         Console.Write("Choose an amount : ");
-        decimal amount = Convert.ToDecimal(Console.ReadLine());
-
+        /* decimal amount = (decimal.Parse(Console.ReadLine(), System.Globalization.NumberStyles.AllowLeadingSign));  */
+        decimal amount = Convert.ToDecimal(Console.ReadLine()); 
         DateTime date = DateTime.Now;
         
         string res2 = "Y";
@@ -94,6 +95,7 @@ if(res == "Y")
             
         
         userSelected.CreateTransaction(idAccount, amount, date, transName, typesId, description);
+        Console.Write("Another transaction? (Y/N)");
         res = Console.ReadLine().ToUpper();
     }
 }

@@ -46,13 +46,7 @@ namespace Entities {
                         command.Parameters.AddWithValue(parameter.Key, parameter.Value);
                     }
                     command.ExecuteNonQuery();
-                    Console.WriteLine($"Type {this.LibelleType} inserted in DB");
-
-
-                    // Retrieve the last inserted ID
-                    query = "SELECT last_insert_rowid();";
-                    command.CommandText = query;
-                    IdType = Convert.ToInt32(command.ExecuteScalar());   
+                    Console.WriteLine($"Type {this.LibelleType} inserted in DB"); 
                 }
                 catch (Exception e)
                 {
